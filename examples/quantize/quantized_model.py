@@ -18,7 +18,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import lib.dataset as mnist
+import tensorfuzz.dataset as mnist
 import tensorflow as tf
 
 

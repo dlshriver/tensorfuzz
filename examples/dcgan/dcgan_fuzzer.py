@@ -18,13 +18,13 @@ from __future__ import division
 from __future__ import print_function
 import numpy as np
 import tensorflow as tf
-from lib.fuzz_utils import build_fetch_function
-from lib.corpus import InputCorpus
-from lib.corpus import seed_corpus_from_numpy_arrays
-from lib.coverage_functions import raw_logit_coverage_function
-from lib.fuzzer import Fuzzer
-from lib.mutation_functions import do_basic_mutations
-from lib.sample_functions import uniform_sample_function
+from tensorfuzz.fuzz_utils import build_fetch_function
+from tensorfuzz.corpus import InputCorpus
+from tensorfuzz.corpus import seed_corpus_from_numpy_arrays
+from tensorfuzz.coverage_functions import raw_logit_coverage_function
+from tensorfuzz.fuzzer import Fuzzer
+from tensorfuzz.mutation_functions import do_basic_mutations
+from tensorfuzz.sample_functions import uniform_sample_function
 from third_party.dcgan.ops import binary_cross_entropy_with_logits
 
 tf.flags.DEFINE_integer("total_inputs_to_fuzz", 100, "Number of mutations.")

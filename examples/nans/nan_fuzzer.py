@@ -19,13 +19,13 @@ from __future__ import print_function
 import random
 import numpy as np
 import tensorflow as tf
-from lib import fuzz_utils
-from lib.corpus import InputCorpus
-from lib.corpus import seed_corpus_from_numpy_arrays
-from lib.coverage_functions import all_logit_coverage_function
-from lib.fuzzer import Fuzzer
-from lib.mutation_functions import do_basic_mutations
-from lib.sample_functions import recent_sample_function
+from tensorfuzz import fuzz_utils
+from tensorfuzz.corpus import InputCorpus
+from tensorfuzz.corpus import seed_corpus_from_numpy_arrays
+from tensorfuzz.coverage_functions import all_logit_coverage_function
+from tensorfuzz.fuzzer import Fuzzer
+from tensorfuzz.mutation_functions import do_basic_mutations
+from tensorfuzz.sample_functions import recent_sample_function
 
 
 tf.flags.DEFINE_string(

@@ -21,7 +21,7 @@ import random as random
 import numpy as np
 import scipy
 import tensorflow as tf
-import lib.dataset as mnist
+import tensorfuzz.dataset as mnist
 
 
 def basic_mnist_input_corpus(choose_randomly=False, data_dir="/tmp/mnist"):

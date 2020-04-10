@@ -35,7 +35,7 @@ It contains examples of looking for numerical errors, finding broken loss functi
 in publicly available code, and checking for disagreements between trained classifiers
 and their quantized versions.
 
-### /lib
+### /tensorfuzz
 
 This directoy contains the fuzzing engine and all the necessary utils.
 

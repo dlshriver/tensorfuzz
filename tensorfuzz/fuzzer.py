@@ -16,7 +16,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from lib.corpus import CorpusElement
+from tensorfuzz.corpus import CorpusElement
 import tensorflow as tf
 
 
