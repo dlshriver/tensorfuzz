@@ -80,6 +80,38 @@ def objective_function(corpus_element):
         return True
     return False
 
+def basic_mutation_function(
+    corpus_element, mutations_count, a_min=-1.0, a_max=1.0
+):
+    """Mutates image inputs with white noise.
+
+  Args:
+    corpus_element: A CorpusElement object. It's assumed in this case that
+      corpus_element.data[0] is a numpy representation of an image and
+      corput_element.data[1] is a label or something we *don't* want to change.
+    mutations_count: Integer representing number of mutations to do in
+      parallel.
+
+  Returns:
+    A list of batches, the first of which is mutated images and the second of
+    which is passed through the function unchanged (because they are image
+    labels or something that we never intended to mutate).
+  """
+    [data] = corpus_element.data
+    batch = np.repeat(data[None], mutations_count, axis=0)
+
+    sigma = (a_max - a_min) / 5
+    noise = np.random.normal(size=batch.shape, scale=sigma)
+
+    mutated_batch = noise + batch
+
+    mutated_batch = np.clip(
+        mutated_batch, a_min=a_min, a_max=a_max
+    )
+
+    mutated_batches = [mutated_batch]
+    return mutated_batches
+
 
 def onnx_to_tf(node, *inputs):
     if isinstance(node, onnx.ValueInfoProto):
@@ -286,7 +318,7 @@ def main(args):
 
     coverage_function = raw_logit_coverage_function
     image = (lower_bound + upper_bound) / 2
-    numpy_arrays = [[image, -1]]
+    numpy_arrays = [[image]]
 
     with tf.Session() as sess:
         tensor_map = get_tensors_from_onnx_model(sess, FLAGS.model)
@@ -294,7 +326,7 @@ def main(args):
         fetch_function = build_fetch_function(sess, tensor_map)
 
         size = FLAGS.mutations_per_corpus_item
-        mutation_function = lambda elt: do_basic_mutations(
+        mutation_function = lambda elt: basic_mutation_function(
             elt, size, a_min=lower_bound, a_max=upper_bound
         )
 
