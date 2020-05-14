@@ -214,11 +214,47 @@ def onnx_to_tf(node, *inputs):
             new_shape = (int(np.prod(x.shape[:axis])), -1)
         return tf.reshape(x, new_shape)
     elif node.op_type == "Concat":
+        attributes = {a.name: as_numpy(a) for a in node.attribute}
+        axis = attributes.get("axis")
+        return tf.concat(inputs, axis=axis)
+    elif node.op_type == "MaxPool":
         assert len(inputs) == 1
         [x] = inputs
         attributes = {a.name: as_numpy(a) for a in node.attribute}
-        axis = attributes.get("axis")
-        return tf.concat(x, axis=axis)
+        kernel_shape = list(attributes.get("kernel_shape"))
+        strides = list(attributes.get("strides", 1))
+        pads = list(attributes.get("pads", [0, 0, 0, 0]))
+        assert not bool(attributes.get("ceil_mode", False))
+        assert attributes.get("dilations", 1) == 1
+        assert attributes.get("storage_order", 0) == 0
+        x_padded = tf.pad(
+            x,
+            [(0, 0), (0, 0)]
+            + list(zip(pads[: len(pads) // 2], pads[len(pads) // 2 :])),
+        )
+        x_padded_T = tf.transpose(x_padded, (0, 2, 3, 1))
+        y_T = tf.nn.max_pool(
+            x_padded_T,
+            kernel_shape,
+            strides,
+            padding="VALID",
+        )
+        return tf.transpose(y_T, (0, 3, 1, 2))
+    elif node.op_type == "BatchNormalization":
+        assert len(inputs) == 5
+        x, scale, bias, mean, variance = inputs
+        attributes = {a.name: as_numpy(a) for a in node.attribute}
+        epsilon = attributes.get("epsilon", 1e-5)
+        x_T = tf.transpose(x, (0, 2, 3, 1))
+        y_T = tf.nn.batch_normalization(
+            x_T,
+            mean,
+            variance,
+            bias,
+            scale,
+            epsilon
+        )
+        return tf.transpose(y_T, (0, 3, 1, 2))
     raise NotImplementedError("Unsupported op type: %s" % node.op_type)
 
 

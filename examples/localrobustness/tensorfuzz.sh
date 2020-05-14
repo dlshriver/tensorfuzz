@@ -11,5 +11,6 @@ BASEDIR=$(realpath $DIR/../../)
 
 source $BASEDIR/.venv/bin/activate
 export PYTHONPATH=$BASEDIR:$PYTHONPATH
+export TF_CPP_MIN_LOG_LEVEL=3
 
 python $DIR/localrobustness_fuzzer.py $@
