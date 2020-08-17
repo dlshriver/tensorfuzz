@@ -190,6 +190,10 @@ def onnx_to_tf(node, *inputs):
         assert len(inputs) == 2
         a, b = inputs
         return a + b
+    elif node.op_type == "Mul":
+        assert len(inputs) == 2
+        a, b = inputs
+        return a * b
     elif node.op_type == "Pad":
         assert len(inputs) == 1
         [x] = inputs
@@ -235,8 +239,8 @@ def onnx_to_tf(node, *inputs):
         x_padded_T = tf.transpose(x_padded, (0, 2, 3, 1))
         y_T = tf.nn.max_pool(
             x_padded_T,
-            kernel_shape,
-            strides,
+            [1] + kernel_shape + [1],
+            [1] + strides + [1],
             padding="VALID",
         )
         return tf.transpose(y_T, (0, 3, 1, 2))
